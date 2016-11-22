@@ -4,20 +4,20 @@ import java.util.ArrayList;
 
 import src.world.objects.PersonBot;
 
-public class WaterNode extends Node
+public class ThirstNode extends Node
 {
+
 	PersonBot person;
 	ArrayList<Node> nodes = new ArrayList<Node>();
-	public WaterNode(PersonBot p)
+	public ThirstNode(PersonBot p)
 	{
-		id = "Water";
+		id = "Thirst";
 		person = p;
 	}
 	
 	@Override
 	public void setId(String id)
 	{
-		System.err.println("You cannot change the id of the water node");
+		System.err.println("You cannot change the id of the thirst node");
 	}
-	
 }

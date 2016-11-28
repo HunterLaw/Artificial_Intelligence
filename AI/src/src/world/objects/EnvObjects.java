@@ -1,23 +1,21 @@
 package src.world.objects;
 
-import java.awt.Rectangle;
+import src.objects.TexturedObject2D;
 
-public class EnvObjects 
+public class EnvObjects extends TexturedObject2D
 {
-	Rectangle rect;
-	int x =0, y=0;
-	int width =0, height =0;
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	public EnvObjects(int x, int y, int width ,int height)
 	{
-		this.x = x;
-		this.y = y;
-		this.width = width;
-		this.height = height;
-		rect = new Rectangle(width,height);
+		super((double)x,(double)y,width,height,true);
 	}
-	
-	public int getX() {return x;}
-	public int getY() {return y;}
-	public int getWidth() {return width;}
-	public int getHeight() {return height;}
+
+	@Override
+	public void update() {
+		
+	}
 }

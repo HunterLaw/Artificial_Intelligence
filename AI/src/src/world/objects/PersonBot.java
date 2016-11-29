@@ -19,30 +19,43 @@ public class PersonBot extends Bot {
 	boolean moveToRPoint = false;
 	PersonDecisionTree decisions;
 	boolean atRPoint = false;
+	boolean swimming = false;
 	public PersonBot(int x, int y, int width , int height)
 	{
 		super(x,y,width,height);
 		decisions = new PersonDecisionTree(this);
-		System.out.println(health);
+//		System.out.println(health);
 	}
 
 	public void move(Direction loor, Direction uord)
 	{
 		if(loor == Direction.left)
 		{
-			x -= moveSpeed;
+			if(!swimming)
+				x -= moveSpeed;
+			else
+				x -= moveSpeed/2;
 		}
 		else if(loor == Direction.right)
 		{
-			x += moveSpeed;
+			if(!swimming)
+				x += moveSpeed;
+			else
+				x += moveSpeed/2;
 		}
 		if(uord == Direction.up)
 		{
-			y -= moveSpeed;
+			if(!swimming)
+				y -= moveSpeed;
+			else
+				y -= moveSpeed/2;
 		}
 		else if(uord == Direction.down)
 		{
-			y += moveSpeed;
+			if(!swimming)
+				y += moveSpeed;
+			else
+				y += moveSpeed/2;
 		}
 	}
 	
@@ -97,7 +110,7 @@ public class PersonBot extends Bot {
 	
 	public void randomPoint()
 	{
-		System.out.println("here");
+//		System.out.println("here");
 		randPoint.x = rand.nextInt((640*2)-width)+(width/2);
 		randPoint.y = rand.nextInt((480*2)-height)+(height/2);
 	}
@@ -145,9 +158,9 @@ public class PersonBot extends Bot {
 	{
 		updateHealthVars();
 		setHealthColor();
-		System.out.println("Thirst: "+thirst);
-		System.out.println("Hunger: "+hunger);
-		System.out.println("Health: "+health);
+//		System.out.println("Thirst: "+thirst);
+//		System.out.println("Hunger: "+hunger);
+//		System.out.println("Health: "+health);
 		decisions.decide();
 		if(!atRPoint)
 		{
@@ -156,4 +169,18 @@ public class PersonBot extends Bot {
 		
 	}
 	
+	public void setSwimming(boolean swim)
+	{
+		swimming = swim;
+	}
+	
+	public boolean getSwimming() {return swimming;}
+	
+	public class Collision implements Runnable
+	{
+		public void run()
+		{
+			
+		}
+	}
 }

@@ -48,11 +48,12 @@ public class World implements Runnable
 		map.loadBasicImage(bgs);
 		
 		objects.add(chars);
-		for(int i = rand.nextInt(5);i>=0;i--)
-		{
-			objects.add(new FoodSource(rand.nextInt(640*2),rand.nextInt(480*2),10,10));
-			objects.add(new WaterSource(rand.nextInt(640*2),rand.nextInt(480*2),10,10));
-		}
+//		for(int i = rand.nextInt(5);i>=0;i--)
+//		{
+//			objects.add(new FoodSource(rand.nextInt(640*2),rand.nextInt(480*2),10,10));
+			objects.addAll(new WaterSource(rand.nextInt(640*2),rand.nextInt(480*2),10,10).getObjects());
+//			System.out.println(objects.size());
+//		}
 		
 		render.setObjectArray(objects);
 		

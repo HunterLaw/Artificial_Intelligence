@@ -18,16 +18,28 @@ public class FoodSource extends EnvObjects
 	public FoodSource(int x, int y, int width, int height) {
 		super(x, y, width, height);
 		color = Color.orange;
-		int size = rand.nextInt(3)+1;
+		int size = 2+rand.nextInt(2);
+//		int size = 3;
+		this.width *= size;
+		this.height *= size;
+//		System.out.println("S:"+size);
 //		int quant = rand.nextInt(size*size)-1;
 		int[][] s = new int[size][size];
 		if(size%2 == 0)
 		{
-			s[rand.nextInt(1)+1][rand.nextInt(1)+1] =1;
+			s[rand.nextInt(2)+(size/2)-1][rand.nextInt(2)+(size/2)-1] =1;
+		}
+		else
+		{
+			s[(int)(size/2)][(int)(size/2)]=1;
 		}
 		boolean flag = false;
-		for(int quant = rand.nextInt(size*size)-1;quant>=0;quant--)
+		int quant = rand.nextInt((size*size)-1);
+//		System.out.println("Q:"+quant);
+//		printArray(s);
+		while(quant>=0)
 		{
+//			System.out.println("QA:"+quant);
 			flag = false;
 			while(!flag)
 			{
@@ -39,24 +51,51 @@ public class FoodSource extends EnvObjects
 					s[xs][ys] = 1;
 				}
 			}
+			quant--;
 		}
-		texture = new BufferedImage(size*width,size*height,BufferedImage.TYPE_INT_RGB);
+//		printArray(s);
+//		System.out.println("W:"+width);
+		texture = new BufferedImage(this.width,this.height,BufferedImage.TYPE_INT_ARGB);
 		Graphics2D g = (Graphics2D) texture.getGraphics();
 		g.setColor(color);
 		for(int ys =0;ys<size;ys++)
 		{
 			for(int xs = 0;xs<size;xs++)
 			{
-				g.fillRect(xs*width, ys*height, width, height);
+				if(s[ys][xs] == 1)
+				{
+					g.fillRect(xs*width, ys*height, width, height);
+				
+				}
 			}
 		}
 		g.dispose();
 	}
 	
+	public void printArray(int[][] s)
+	{
+		for(int y = 0;y<s.length;y++)
+		{
+			for(int x =0; x< s[0].length;x++)
+			{
+				System.out.print(s[y][x] +" ");
+			}
+			System.out.println();
+		}
+	}
+	
 	public boolean isXYNextTo(int x, int y, int[][] s)
 	{
-		if(s[x-1][y] == 1 || s[x+1][y] == 1 || s[x][y-1]== 1 || s[x][y+1] == 1)return true;
-		return false;
+		boolean rc = false;
+		if(x != 0 && s[x-1][y] == 1)
+			rc = true;
+		else if(x != (s.length-1) && s[x+1][y] == 1)
+			rc = true;
+		else if(y != 0 && s[x][y-1]== 1)
+			rc = true;
+		else if(y != (s.length-1) && s[x][y+1] == 1)
+			rc = true;
+		return rc;
 	}
 
 }

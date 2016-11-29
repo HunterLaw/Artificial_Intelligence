@@ -23,7 +23,7 @@ public class Main
 	public static void GUI()
 	{
 		panel = new JPanel();
-		panel.setPreferredSize(new Dimension(640*2,480*2));
+		panel.setPreferredSize(new Dimension(640,480));
 		panel.setLayout(null);
 
 		frame = new Window(panel,"AI");

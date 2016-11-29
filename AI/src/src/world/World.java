@@ -15,6 +15,7 @@ import src.movement.Direction;
 import src.objects.NonTexturedObject2D;
 import src.world.objects.FoodSource;
 import src.world.objects.PersonBot;
+import src.world.objects.Sources;
 import src.world.objects.WaterSource;
 
 public class World implements Runnable
@@ -25,7 +26,8 @@ public class World implements Runnable
 	JPanel panel;
 	Thread thread;
 	
-	ArrayList<NonTexturedObject2D> objects = new ArrayList<NonTexturedObject2D>(); 
+	ArrayList<NonTexturedObject2D> objects = new ArrayList<NonTexturedObject2D>();
+	ArrayList<Sources> envobjects = new ArrayList<Sources>();
 	PersonBot chars;
 	
 	FPS fps = new FPS(60);
@@ -47,13 +49,18 @@ public class World implements Runnable
 		bgs = new File(this.getClass().getClassLoader().getResource("media/TestScrolling.png").getPath());
 		map.loadBasicImage(bgs);
 		
-		objects.add(chars);
-//		for(int i = rand.nextInt(5);i>=0;i--)
-//		{
-//			objects.add(new FoodSource(rand.nextInt(640*2),rand.nextInt(480*2),10,10));
-			objects.addAll(new WaterSource(rand.nextInt(640*2),rand.nextInt(480*2),10,10).getObjects());
+		for(int i = rand.nextInt(5);i>=0;i--)
+		{
+			System.out.println(i);
+			envobjects.add(new FoodSource(rand.nextInt((640*2)-(10*3)),rand.nextInt((480*2)-(10*3)),10,10));
+			envobjects.add(new WaterSource(rand.nextInt((640*2)-(10*8)),rand.nextInt((480*2)-(10*8)),10,10));
 //			System.out.println(objects.size());
-//		}
+		}
+		for(Sources s: envobjects)
+		{
+			objects.addAll(s.getObjects());
+		}
+		objects.add(chars);
 		
 		render.setObjectArray(objects);
 		

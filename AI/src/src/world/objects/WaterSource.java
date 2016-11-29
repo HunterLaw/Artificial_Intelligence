@@ -6,7 +6,7 @@ import java.util.Random;
 
 import src.objects.NonTexturedObject2D;
 
-public class WaterSource extends NonTexturedObject2D{
+public class WaterSource extends Sources{
 
 	/**
 	 * 
@@ -14,7 +14,6 @@ public class WaterSource extends NonTexturedObject2D{
 	private static final long serialVersionUID = 3666105555535577495L;
 
 	Random rand = new Random();
-	ArrayList<Water> water = new ArrayList<Water>();
 	public WaterSource(int x, int y, int width, int height) {
 		super(x, y, width, height,true);
 		color = Color.cyan;
@@ -62,37 +61,20 @@ public class WaterSource extends NonTexturedObject2D{
 //		texture = new BufferedImage(this.width,this.height,BufferedImage.TYPE_INT_ARGB);
 //		Graphics2D g = (Graphics2D) texture.getGraphics();
 //		g.setColor(color);
-		System.out.println(water.size());
+//		System.out.println(water.size());
 
 		for(int ys =0;ys<size;ys++)
 		{
 			for(int xs = 0;xs<size;xs++)
 			{
-				if(s[ys][xs] instanceof Water)
+				if(s[ys][xs] != null)
 				{
-					water.add(s[ys][xs]);
+					resources.add(s[ys][xs]);
 				}
 			}
 		}
-		System.out.println(water.size());
+//		System.out.println(water.size());
 //		g.dispose();
-	}
-	
-	public void printArray(int[][] s)
-	{
-		for(int y = 0;y<s.length;y++)
-		{
-			for(int x =0; x< s[0].length;x++)
-			{
-				System.out.print(s[y][x] +" ");
-			}
-			System.out.println();
-		}
-	}
-	
-	public ArrayList<Water> getObjects()
-	{
-		return water;
 	}
 	
 	public boolean isXYNextTo(int x, int y, Water[][] s)

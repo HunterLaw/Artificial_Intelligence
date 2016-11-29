@@ -4,16 +4,11 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 
-public class Water extends EnvObjects{
+public class Food extends EnvObjects{
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
-
-	public Water(int x, int y, int width, int height) {
+	public Food(int x, int y, int width, int height) {
 		super(x, y, width, height);
-		color = Color.cyan;
+		color = Color.orange;
 		texture = new BufferedImage(width,height,BufferedImage.TYPE_INT_RGB);
 		Graphics2D g = (Graphics2D) texture.getGraphics();
 		g.setColor(color);

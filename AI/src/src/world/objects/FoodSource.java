@@ -1,11 +1,10 @@
 package src.world.objects;
 
 import java.awt.Color;
-import java.awt.Graphics2D;
-import java.awt.image.BufferedImage;
+import java.util.ArrayList;
 import java.util.Random;
 
-public class FoodSource extends EnvObjects
+public class FoodSource extends Sources
 {
 
 	/**
@@ -15,8 +14,9 @@ public class FoodSource extends EnvObjects
 	
 	Random rand = new Random();
 	
+	
 	public FoodSource(int x, int y, int width, int height) {
-		super(x, y, width, height);
+		super(x, y, width, height,true);
 		color = Color.orange;
 		int size = 2+rand.nextInt(2);
 //		int size = 3;
@@ -24,15 +24,20 @@ public class FoodSource extends EnvObjects
 		this.height *= size;
 //		System.out.println("S:"+size);
 //		int quant = rand.nextInt(size*size)-1;
-		int[][] s = new int[size][size];
+		Food[][] s = new Food[size][size];
+		int i,j;
 		if(size%2 == 0)
 		{
-			s[rand.nextInt(2)+(size/2)-1][rand.nextInt(2)+(size/2)-1] =1;
+			i = rand.nextInt(2)+(size/2)-1;
+			j = rand.nextInt(2)+(size/2)-1;
 		}
 		else
 		{
-			s[(int)(size/2)][(int)(size/2)]=1;
+			i = (int)(size/2);
+			j = (int)(size/2);
 		}
+		s[i][j] = new Food(x+(width*i),y+(width*j),width,height);
+
 		boolean flag = false;
 		int quant = rand.nextInt((size*size)-1);
 //		System.out.println("Q:"+quant);
@@ -48,54 +53,47 @@ public class FoodSource extends EnvObjects
 				if(isXYNextTo(xs,ys,s))
 				{
 					flag = true;
-					s[xs][ys] = 1;
+					s[xs][ys] = new Food(x+(width*xs),y+(height*ys),width,height);
 				}
 			}
 			quant--;
 		}
 //		printArray(s);
 //		System.out.println("W:"+width);
-		texture = new BufferedImage(this.width,this.height,BufferedImage.TYPE_INT_ARGB);
-		Graphics2D g = (Graphics2D) texture.getGraphics();
-		g.setColor(color);
+//		texture = new BufferedImage(this.width,this.height,BufferedImage.TYPE_INT_ARGB);
+//		Graphics2D g = (Graphics2D) texture.getGraphics();
+//		g.setColor(color);
 		for(int ys =0;ys<size;ys++)
 		{
 			for(int xs = 0;xs<size;xs++)
 			{
-				if(s[ys][xs] == 1)
+				if(s[ys][xs] != null)
 				{
-					g.fillRect(xs*width, ys*height, width, height);
-				
+					resources.add(s[ys][xs]);
 				}
 			}
 		}
-		g.dispose();
+//		g.dispose();
 	}
 	
-	public void printArray(int[][] s)
-	{
-		for(int y = 0;y<s.length;y++)
-		{
-			for(int x =0; x< s[0].length;x++)
-			{
-				System.out.print(s[y][x] +" ");
-			}
-			System.out.println();
-		}
-	}
-	
-	public boolean isXYNextTo(int x, int y, int[][] s)
+	public boolean isXYNextTo(int x, int y, Food[][] s)
 	{
 		boolean rc = false;
-		if(x != 0 && s[x-1][y] == 1)
+		if(x != 0 && s[x-1][y] instanceof Food)
 			rc = true;
-		else if(x != (s.length-1) && s[x+1][y] == 1)
+		else if(x != (s.length-1) && s[x+1][y] instanceof Food)
 			rc = true;
-		else if(y != 0 && s[x][y-1]== 1)
+		else if(y != 0 && s[x][y-1] instanceof Food)
 			rc = true;
-		else if(y != (s.length-1) && s[x][y+1] == 1)
+		else if(y != (s.length-1) && s[x][y+1] instanceof Food)
 			rc = true;
 		return rc;
+	}
+
+	@Override
+	public void update() {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

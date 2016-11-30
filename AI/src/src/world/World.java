@@ -46,7 +46,7 @@ public class World implements Runnable
 		render  = new Renderer2D(640*2, 480*2, BufferedImage.TYPE_INT_RGB);
 		map = new ScrollingMap(0,0,640*2,480*2,640,480);
 		map.setCharacter(chars);
-		bgs = new File(this.getClass().getClassLoader().getResource("media/TestScrolling.png").getPath());
+		bgs = new File(this.getClass().getClassLoader().getResource("TestScrolling.png").getPath());
 		map.loadBasicImage(bgs);
 		
 		for(int i = rand.nextInt(5);i>=0;i--)

@@ -6,6 +6,11 @@ import java.awt.image.BufferedImage;
 
 public class Food extends EnvObjects{
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	int surround = -1;
 	public Food(int x, int y, int width, int height) {
 		super(x, y, width, height);
 		color = Color.orange;
@@ -17,4 +22,14 @@ public class Food extends EnvObjects{
 //		System.out.println("X: "+ x + " Y: "+y);
 	}
 
+	public void setSurround(int s)
+	{
+		surround = s;
+	}
+	
+	public int getSurround()
+	{
+		return surround;
+	}
+	
 }

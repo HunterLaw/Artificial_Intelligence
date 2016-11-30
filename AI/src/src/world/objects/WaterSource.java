@@ -1,6 +1,7 @@
 package src.world.objects;
 
 import java.awt.Color;
+import java.awt.Point;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -35,24 +36,28 @@ public class WaterSource extends Sources{
 			i = (int)(size/2);
 			j = (int)(size/2);
 		}
-		s[i][j] = new Water(x+(width*i),y+(width*j),width,height);
+		s[i][j] = new Water(i,j,width,height);
+		s[i][j].setSurround(4);
+		insertResources(s[i][j],s);
 		boolean flag = false;
 		int quant = rand.nextInt((size*size)-1);
 //		System.out.println("Q:"+quant);
 //		printArray(s);
 		while(quant>=0)
 		{
-//			System.out.println("QA:"+quant);
-			flag = false;
-			while(!flag)
+			int surround = ((Water)resources.get(0)).getSurround();
+			int n = rand.nextInt(surround);
+			switch(n)
 			{
-				int xs = rand.nextInt(size);
-				int ys = rand.nextInt(size);
-				if(isXYNextTo(xs,ys,s))
-				{
-					flag = true;
-					s[xs][ys] =  new Water(x+(width*xs),y+(height*ys),width,height);
-				}
+			case 0:
+				break;
+			case 1:
+				break;
+			case 2:
+				break;
+			case 3:
+				break;
+				default:
 			}
 			quant--;
 		}
@@ -75,6 +80,66 @@ public class WaterSource extends Sources{
 		}
 //		System.out.println(water.size());
 //		g.dispose();
+	}
+	
+	
+	
+	public void insertResources(Water water, Water[][] w)
+	{
+		int sum = 0;
+		int x = water.getX(),y = water.getY();
+		if(x != 0)
+		{
+			if(w[x-1][y] == null)
+				sum++;
+			else
+				w[x-1][y].subSurround();
+		}
+		if(x != w.length)
+		{
+			if(w[x+1][y] == null)
+				sum++;
+			else
+				w[x+1][y].subSurround();
+		}
+		if(y != 0)
+		{
+			if(w[x][y-1] == null)
+				sum++;
+			else
+				w[x][y-1].subSurround();
+		}
+		if(y != w.length)
+		{
+			if(w[x][y+1] == null)
+				sum++;
+			else
+				w[x][y+1].subSurround();
+		}
+		water.setSurround(sum);
+		if(resources.size() == 0) resources.add(water);
+		else
+		{
+			for(int i =0;i < resources.size();i++)
+			{
+				if(sum <=((Water)resources.get(i)).getSurround())
+				{
+					resources.add(i, water);
+					return;
+				}
+				else if(i+1 == resources.size())
+				{
+					resources.add(water);
+				}
+			}
+		}
+	}
+	
+	public Point findFourWay(Water[][] s)
+	{
+		Point p = new Point(-1,-1);
+		
+		return p;
 	}
 	
 	public boolean isXYNextTo(int x, int y, Water[][] s)

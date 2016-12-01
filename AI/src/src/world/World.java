@@ -49,13 +49,13 @@ public class World implements Runnable
 		bgs = new File(this.getClass().getClassLoader().getResource("TestScrolling.png").getPath());
 		map.loadBasicImage(bgs);
 		
-		for(int i = rand.nextInt(5);i>=0;i--)
-		{
-			System.out.println(i);
-			envobjects.add(new FoodSource(rand.nextInt((640*2)-(10*3)),rand.nextInt((480*2)-(10*3)),10,10));
+//		for(int i = rand.nextInt(5);i>=0;i--)
+//		{
+//			System.out.println(i);
+//			envobjects.add(new FoodSource(rand.nextInt((640*2)-(10*3)),rand.nextInt((480*2)-(10*3)),10,10));
 			envobjects.add(new WaterSource(rand.nextInt((640*2)-(10*8)),rand.nextInt((480*2)-(10*8)),10,10));
 //			System.out.println(objects.size());
-		}
+//		}
 		for(Sources s: envobjects)
 		{
 			objects.addAll(s.getObjects());

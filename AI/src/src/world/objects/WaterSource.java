@@ -5,6 +5,7 @@ import java.awt.Point;
 import java.util.ArrayList;
 import java.util.Random;
 
+import src.movement.Direction;
 import src.objects.NonTexturedObject2D;
 
 public class WaterSource extends Sources{
@@ -18,8 +19,8 @@ public class WaterSource extends Sources{
 	public WaterSource(int x, int y, int width, int height) {
 		super(x, y, width, height,true);
 		color = Color.cyan;
-		int size = 4+rand.nextInt(5);
-//		int size = 3;
+//		int size = 4+rand.nextInt(5);
+		int size = 3;
 		this.width *= size;
 		this.height *= size;
 //		System.out.println("S:"+size);
@@ -36,29 +37,18 @@ public class WaterSource extends Sources{
 			i = (int)(size/2);
 			j = (int)(size/2);
 		}
-		s[i][j] = new Water(i,j,width,height);
-		s[i][j].setSurround(4);
+		s[i][j] = new Water(i,j,width,height,size);
 		insertResources(s[i][j],s);
 		boolean flag = false;
 		int quant = rand.nextInt((size*size)-1);
-//		System.out.println("Q:"+quant);
+		System.out.println("Q:"+quant);
 //		printArray(s);
 		while(quant>=0)
 		{
-			int surround = ((Water)resources.get(0)).getSurround();
-			int n = rand.nextInt(surround);
-			switch(n)
-			{
-			case 0:
-				break;
-			case 1:
-				break;
-			case 2:
-				break;
-			case 3:
-				break;
-				default:
-			}
+			printArray(s);
+			Point p = ((Water)resources.get(0)).getRandSurroundPoint();
+			s[p.x][p.y] = new Water(p.x,p.y,width,height,size);
+			insertResources(s[p.x][p.y],s);
 			quant--;
 		}
 //		printArray(s);
@@ -68,15 +58,11 @@ public class WaterSource extends Sources{
 //		g.setColor(color);
 //		System.out.println(water.size());
 
-		for(int ys =0;ys<size;ys++)
+		for(EnvObjects w: resources)
 		{
-			for(int xs = 0;xs<size;xs++)
-			{
-				if(s[ys][xs] != null)
-				{
-					resources.add(s[ys][xs]);
-				}
-			}
+			Water w2 = (Water)w;
+			w2.setX(x+(w2.getX()*width));
+			w2.setY(x+(w2.getY()*height));
 		}
 //		System.out.println(water.size());
 //		g.dispose();
@@ -90,56 +76,84 @@ public class WaterSource extends Sources{
 		int x = water.getX(),y = water.getY();
 		if(x != 0)
 		{
+			//Left
 			if(w[x-1][y] == null)
 				sum++;
 			else
-				w[x-1][y].subSurround();
+				w[x-1][y].removeSurround(Direction.right);
 		}
-		if(x != w.length)
+		if(x != w.length-1)
 		{
+			//Right
 			if(w[x+1][y] == null)
 				sum++;
 			else
-				w[x+1][y].subSurround();
+				w[x+1][y].removeSurround(Direction.left);
 		}
 		if(y != 0)
 		{
+			//Up
 			if(w[x][y-1] == null)
 				sum++;
 			else
-				w[x][y-1].subSurround();
+				w[x][y-1].removeSurround(Direction.down);
 		}
-		if(y != w.length)
+		if(y != w.length-1)
 		{
+			//Down
 			if(w[x][y+1] == null)
 				sum++;
 			else
-				w[x][y+1].subSurround();
+				w[x][y+1].removeSurround(Direction.up);
 		}
 		water.setSurround(sum);
 		if(resources.size() == 0) resources.add(water);
 		else
 		{
-			for(int i =0;i < resources.size();i++)
-			{
-				if(sum <=((Water)resources.get(i)).getSurround())
-				{
-					resources.add(i, water);
-					return;
-				}
-				else if(i+1 == resources.size())
-				{
-					resources.add(water);
-				}
-			}
+			System.out.println();
+			System.out.print("Resources before: ");
+			for(int i =0;i<resources.size();i++)System.out.print(((Water)resources.get(i)).surround + ", ");
+			System.out.println();
+			System.out.println("Placing: "+sum);
+			resources.add(water);
+			/*
+			 *TODO: Implement heap sorting 
+			 * for ( (n-1/2) ->0 ) perculate up 
+			 */
+//			for(int i =0;i < resources.size();i++)
+//			{
+//				if(sum <=((Water)resources.get(i)).getSurround())
+//				{
+//					resources.add(i+1, water);
+//					break;
+//				}
+//				else if(i+1 == resources.size())
+//				{
+//					resources.add(water);
+//					break;
+//				}
+//			}
+			System.out.print("Resources After: ");
+			for(int i =0;i<resources.size();i++)System.out.print(((Water)resources.get(i)).surround + ", ");
+			System.out.println();
 		}
 	}
 	
-	public Point findFourWay(Water[][] s)
+	public int countWater(Water[][] w)
 	{
-		Point p = new Point(-1,-1);
-		
-		return p;
+		int sum =0;
+		for(int x =0;x < w.length;x++)
+		{
+			for(int y =0;y < w[0].length;y++)
+			{
+				if(w[x][y] != null)
+				{
+					sum++;
+				}
+				
+			}
+		}
+		return sum;
 	}
 	
 	public boolean isXYNextTo(int x, int y, Water[][] s)
@@ -156,6 +170,29 @@ public class WaterSource extends Sources{
 		return rc;
 	}
 
+	public void printArray(Water[][] w)
+	{
+		for(int x =0;x < w.length;x++)
+		{
+			for(int y =0;y < w[0].length;y++)
+			{
+				if(w[x][y] != null)
+				{
+					System.out.print(" "+w[x][y].surround);
+				}
+				else
+				{
+					System.out.print("-1");
+				}
+				if(y+1 != w[0].length)
+				{
+					System.out.print(",");
+				}
+			}
+			System.out.println();
+		}
+	}
+	
 	@Override
 	public void update() {
 		// TODO Auto-generated method stub

@@ -77,7 +77,7 @@ public class World implements Runnable
 	public void update()
 	{
 		chars.update();
-		map.update(objects, Direction.right, Direction.up);
+//		map.update(objects, Direction.right, Direction.up);
 	}
 	
 	public void render()
@@ -97,7 +97,7 @@ public class World implements Runnable
 		Graphics2D g = (Graphics2D) panel.getGraphics();
 		if(g != null)
 		{
-			g.drawImage(image,map.getWinX(),map.getWinY(),null);
+			g.drawImage(image,0,0,null);
 		}
 		g.dispose();
 	}

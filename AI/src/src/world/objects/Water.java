@@ -5,11 +5,12 @@ import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Random;
 
 import src.movement.Direction;
 
-public class Water extends EnvObjects{
+public class Water extends EnvObjects implements Comparator<Water>{
 
 	/**
 	 * 
@@ -30,28 +31,26 @@ public class Water extends EnvObjects{
 		if(x != 0)
 		{
 			surrounding.add(Direction.left);
-			surround++;
 		}
 		if(x != sizeOfArray-1)
 		{
 			surrounding.add(Direction.right);
-			surround++;
 		}
 		if(y != 0)
 		{
 			surrounding.add(Direction.up);
-			surround++;
 		}
 		if(y != sizeOfArray-1)	
 		{
 			surrounding.add(Direction.down);
-			surround++;
 		}
 		
 		System.out.println("here");
 //		System.out.println("X: "+ x + " Y: "+y);
+	} 
+	public Water() {
+		super(-1,-1,-1,-1);
 	}
-	
 	public void setSurround(int s)
 	{
 		surround = s;
@@ -60,7 +59,7 @@ public class Water extends EnvObjects{
 	public void removeSurround(Direction dir)
 	{
 		if(surrounding.remove(dir))surround--;
-		if(surround < 0) System.out.println("removed "+dir);
+		if(surround < 0) System.out.println("removed "+dir + " from "+toString());
 	}
 	
 	public Point getRandSurroundPoint()
@@ -94,6 +93,11 @@ public class Water extends EnvObjects{
 	public int getSurround()
 	{
 		return surround;
+	}
+
+	@Override
+	public int compare(Water o1, Water o2) {
+		return o2.getSurround()-o1.getSurround();
 	}
 
 }

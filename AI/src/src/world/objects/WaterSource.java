@@ -2,11 +2,11 @@ package src.world.objects;
 
 import java.awt.Color;
 import java.awt.Point;
-import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.PriorityQueue;
 import java.util.Random;
 
 import src.movement.Direction;
-import src.objects.NonTexturedObject2D;
 
 public class WaterSource extends Sources{
 
@@ -16,11 +16,13 @@ public class WaterSource extends Sources{
 	private static final long serialVersionUID = 3666105555535577495L;
 
 	Random rand = new Random();
+	PriorityQueue<Water> pq = new PriorityQueue<Water>(new Water());
 	public WaterSource(int x, int y, int width, int height) {
 		super(x, y, width, height,true);
+		System.out.println(this);
 		color = Color.cyan;
-//		int size = 4+rand.nextInt(5);
-		int size = 3;
+		int size = 4+rand.nextInt(5);
+//		int size = 3;
 		this.width *= size;
 		this.height *= size;
 //		System.out.println("S:"+size);
@@ -45,8 +47,14 @@ public class WaterSource extends Sources{
 //		printArray(s);
 		while(quant>=0)
 		{
-			printArray(s);
-			Point p = ((Water)resources.get(0)).getRandSurroundPoint();
+//			printArray(s);
+			pq.clear();
+			for(EnvObjects e:resources)
+			{
+				pq.add((Water)e);
+			}
+			printPriorityQueue(pq);
+			Point p = pq.peek().getRandSurroundPoint();
 			s[p.x][p.y] = new Water(p.x,p.y,width,height,size);
 			insertResources(s[p.x][p.y],s);
 			quant--;
@@ -57,12 +65,12 @@ public class WaterSource extends Sources{
 //		Graphics2D g = (Graphics2D) texture.getGraphics();
 //		g.setColor(color);
 //		System.out.println(water.size());
-
+		printArray(s);
 		for(EnvObjects w: resources)
 		{
 			Water w2 = (Water)w;
 			w2.setX(x+(w2.getX()*width));
-			w2.setY(x+(w2.getY()*height));
+			w2.setY(y+(w2.getY()*height));
 		}
 //		System.out.println(water.size());
 //		g.dispose();
@@ -107,36 +115,7 @@ public class WaterSource extends Sources{
 				w[x][y+1].removeSurround(Direction.up);
 		}
 		water.setSurround(sum);
-		if(resources.size() == 0) resources.add(water);
-		else
-		{
-			System.out.println();
-			System.out.print("Resources before: ");
-			for(int i =0;i<resources.size();i++)System.out.print(((Water)resources.get(i)).surround + ", ");
-			System.out.println();
-			System.out.println("Placing: "+sum);
-			resources.add(water);
-			/*
-			 *TODO: Implement heap sorting 
-			 * for ( (n-1/2) ->0 ) perculate up 
-			 */
-//			for(int i =0;i < resources.size();i++)
-//			{
-//				if(sum <=((Water)resources.get(i)).getSurround())
-//				{
-//					resources.add(i+1, water);
-//					break;
-//				}
-//				else if(i+1 == resources.size())
-//				{
-//					resources.add(water);
-//					break;
-//				}
-//			}
-			System.out.print("Resources After: ");
-			for(int i =0;i<resources.size();i++)System.out.print(((Water)resources.get(i)).surround + ", ");
-			System.out.println();
-		}
+		resources.add(water);
 	}
 	
 	public int countWater(Water[][] w)
@@ -176,9 +155,9 @@ public class WaterSource extends Sources{
 		{
 			for(int y =0;y < w[0].length;y++)
 			{
-				if(w[x][y] != null)
+				if(w[y][x] != null)
 				{
-					System.out.print(" "+w[x][y].surround);
+					System.out.print(" "+w[y][x].surround);
 				}
 				else
 				{
@@ -191,6 +170,16 @@ public class WaterSource extends Sources{
 			}
 			System.out.println();
 		}
+	}
+	
+	public void printPriorityQueue(PriorityQueue<Water> p)
+	{
+		Iterator<Water> i = p.iterator();
+		while(i.hasNext())
+		{
+			System.out.print(i.next().getSurround() + " ");
+		}
+		System.out.println();
 	}
 	
 	@Override

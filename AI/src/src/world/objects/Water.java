@@ -17,7 +17,7 @@ public class Water extends EnvObjects implements Comparator<Water>{
 	 */
 	private static final long serialVersionUID = 1L;
 
-	int surround = -1;
+	int surround = 0;
 	ArrayList<Direction> surrounding = new ArrayList<Direction>();
 	Random rand = new Random();
 	public Water(int x, int y, int width, int height,int sizeOfArray) {
@@ -28,24 +28,7 @@ public class Water extends EnvObjects implements Comparator<Water>{
 		g.setColor(color);
 		g.fillRect(0, 0, width, height);
 		g.dispose();
-		if(x != 0)
-		{
-			surrounding.add(Direction.left);
-		}
-		if(x != sizeOfArray-1)
-		{
-			surrounding.add(Direction.right);
-		}
-		if(y != 0)
-		{
-			surrounding.add(Direction.up);
-		}
-		if(y != sizeOfArray-1)	
-		{
-			surrounding.add(Direction.down);
-		}
 		
-		System.out.println("here");
 //		System.out.println("X: "+ x + " Y: "+y);
 	} 
 	public Water() {
@@ -54,6 +37,17 @@ public class Water extends EnvObjects implements Comparator<Water>{
 	public void setSurround(int s)
 	{
 		surround = s;
+	}
+	
+	public void addSurround(Direction dir)
+	{
+		if(surrounding.contains(dir))System.out.println("Already contains?");
+		else
+		{
+//			System.out.println(toString() + ": Adding "+ dir);
+			surrounding.add(dir);
+			surround = surrounding.size();
+		}
 	}
 	
 	public void removeSurround(Direction dir)
@@ -66,6 +60,7 @@ public class Water extends EnvObjects implements Comparator<Water>{
 	{
 		Point p = new Point();
 		int i = rand.nextInt(surrounding.size());
+//		System.out.println(toString() + ": "+surrounding.toString());
 		switch(surrounding.get(i))
 		{
 		case left:
@@ -97,7 +92,7 @@ public class Water extends EnvObjects implements Comparator<Water>{
 
 	@Override
 	public int compare(Water o1, Water o2) {
-		return o2.getSurround()-o1.getSurround();
+		return o1.getSurround()-o2.getSurround();
 	}
 
 }

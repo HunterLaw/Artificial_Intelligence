@@ -19,14 +19,14 @@ public class WaterSource extends Sources{
 	PriorityQueue<Water> pq = new PriorityQueue<Water>(new Water());
 	public WaterSource(int x, int y, int width, int height) {
 		super(x, y, width, height,true);
-		System.out.println(this);
+//		System.out.println(this);
 		color = Color.cyan;
 		int size = 4+rand.nextInt(5);
 //		int size = 3;
 		this.width *= size;
 		this.height *= size;
 //		System.out.println("S:"+size);
-//		int quant = rand.nextInt(size*size)-1;
+		int quant = rand.nextInt((size*size)-1);
 		Water[][] s = new Water[size][size];
 		int i,j;
 		if(size%2 == 0)
@@ -41,20 +41,29 @@ public class WaterSource extends Sources{
 		}
 		s[i][j] = new Water(i,j,width,height,size);
 		insertResources(s[i][j],s);
-		boolean flag = false;
-		int quant = rand.nextInt((size*size)-1);
-		System.out.println("Q:"+quant);
+//		int quant = rand.nextInt((size*size)-1);
+//		int quant = 7;
+//		System.out.println("Q:"+quant);
 //		printArray(s);
 		while(quant>=0)
 		{
 //			printArray(s);
+//			System.out.println("Quant: "+quant);
 			pq.clear();
+//			pq.el
 			for(EnvObjects e:resources)
 			{
-				pq.add((Water)e);
+				if(((Water)e).surround != 0)
+					pq.add((Water)e);
 			}
-			printPriorityQueue(pq);
-			Point p = pq.peek().getRandSurroundPoint();
+//			printArray(s);
+//			Water w = hasOneInPQ(pq);
+			Point p;
+//			if(w == null)
+			p = pq.peek().getRandSurroundPoint();
+//			else
+//				p = w.getRandSurroundPoint();
+//			printPriorityQueue(pq);
 			s[p.x][p.y] = new Water(p.x,p.y,width,height,size);
 			insertResources(s[p.x][p.y],s);
 			quant--;
@@ -65,7 +74,7 @@ public class WaterSource extends Sources{
 //		Graphics2D g = (Graphics2D) texture.getGraphics();
 //		g.setColor(color);
 //		System.out.println(water.size());
-		printArray(s);
+//		printArray(s);
 		for(EnvObjects w: resources)
 		{
 			Water w2 = (Water)w;
@@ -80,41 +89,55 @@ public class WaterSource extends Sources{
 	
 	public void insertResources(Water water, Water[][] w)
 	{
-		int sum = 0;
 		int x = water.getX(),y = water.getY();
 		if(x != 0)
 		{
 			//Left
 			if(w[x-1][y] == null)
-				sum++;
+			{
+				water.addSurround(Direction.left);
+			}
 			else
+			{
 				w[x-1][y].removeSurround(Direction.right);
+			}
 		}
 		if(x != w.length-1)
 		{
 			//Right
 			if(w[x+1][y] == null)
-				sum++;
+			{
+				water.addSurround(Direction.right);
+			}
 			else
+			{
 				w[x+1][y].removeSurround(Direction.left);
+			}
 		}
 		if(y != 0)
 		{
 			//Up
 			if(w[x][y-1] == null)
-				sum++;
+			{
+				water.addSurround(Direction.up);
+			}
 			else
+			{
 				w[x][y-1].removeSurround(Direction.down);
+			}
 		}
 		if(y != w.length-1)
 		{
 			//Down
 			if(w[x][y+1] == null)
-				sum++;
+			{
+				water.addSurround(Direction.down);
+			}
 			else
+			{
 				w[x][y+1].removeSurround(Direction.up);
+			}
 		}
-		water.setSurround(sum);
 		resources.add(water);
 	}
 	
@@ -133,6 +156,21 @@ public class WaterSource extends Sources{
 			}
 		}
 		return sum;
+	}
+	
+	public Water hasOneInPQ(PriorityQueue<Water> p)
+	{
+		Water rc = null;
+		Iterator<Water> it = p.iterator();
+		while(it.hasNext())
+		{
+			rc = it.next();
+			if(rc.surround == 1)
+			{
+				return rc;
+			}
+		}
+		return null;
 	}
 	
 	public boolean isXYNextTo(int x, int y, Water[][] s)
@@ -174,10 +212,9 @@ public class WaterSource extends Sources{
 	
 	public void printPriorityQueue(PriorityQueue<Water> p)
 	{
-		Iterator<Water> i = p.iterator();
-		while(i.hasNext())
+		for(int i =0;i< p.size();i++)
 		{
-			System.out.print(i.next().getSurround() + " ");
+			System.out.print(p.poll().getSurround() + " ");
 		}
 		System.out.println();
 	}

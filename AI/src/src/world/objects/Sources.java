@@ -19,4 +19,16 @@ public abstract class Sources extends NonTexturedObject2D{
 	{
 		return resources;
 	}
+	
+	public EnvObjects collisionWithResourceObject(PersonBot p)
+	{
+		for(EnvObjects e: resources)
+		{
+			if(e.getRect().intersects(p.getRect()))
+			{
+				return e;
+			}
+		}
+		return null;
+	}
 }

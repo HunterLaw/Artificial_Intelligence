@@ -81,6 +81,8 @@ public class WaterSource extends Sources{
 			w2.setX(x+(w2.getX()*width));
 			w2.setY(y+(w2.getY()*height));
 		}
+		width *= size;
+		height *= size;
 //		System.out.println(water.size());
 //		g.dispose();
 	}

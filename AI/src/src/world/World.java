@@ -22,25 +22,28 @@ public class World implements Runnable
 {
 	
 	boolean running = false;
-	BufferedImage image;
+	static BufferedImage image;
 	JPanel panel;
-	Thread thread;
+	static Thread thread;
 	
-	ArrayList<NonTexturedObject2D> objects = new ArrayList<NonTexturedObject2D>();
-	ArrayList<Sources> envobjects = new ArrayList<Sources>();
-	PersonBot chars;
+	static ArrayList<NonTexturedObject2D> objects = new ArrayList<NonTexturedObject2D>();
+	static ArrayList<Sources> envobjects = new ArrayList<Sources>();
+	static PersonBot chars;
 	
 	FPS fps = new FPS(60);
-	ScrollingMap map;
-	Renderer2D render;
+	static ScrollingMap map;
+	static Renderer2D render;
 	
 	static File bgs;
 	
 	Random rand = new Random();
+	
+	static World myself;
 
 	
 	public World(JPanel panel)
 	{
+		myself = this;
 		chars = new PersonBot(20,20,10,10);
 		
 		render  = new Renderer2D(640*2, 480*2, BufferedImage.TYPE_INT_RGB);
@@ -56,6 +59,7 @@ public class World implements Runnable
 			envobjects.add(new WaterSource(rand.nextInt((640*2)-(10*8)),rand.nextInt((480*2)-(10*8)),10,10));
 //			System.out.println(objects.size());
 		}
+		envobjects.add(new WaterSource(50,50,10,10));
 		for(Sources s: envobjects)
 		{
 			objects.addAll(s.getObjects());
@@ -72,6 +76,19 @@ public class World implements Runnable
 		thread = new Thread(this);
 		running = true;
 		thread.start();
+	}
+	
+	public static synchronized Sources collisionWithSources(PersonBot p)
+	{
+		for(Sources s: envobjects)
+		{
+			if(s.getRect().intersects(p.getRect()))
+			{
+//				System.out.println("hit");
+				return s;
+			}
+		}
+		return null;
 	}
 	
 	public void update()

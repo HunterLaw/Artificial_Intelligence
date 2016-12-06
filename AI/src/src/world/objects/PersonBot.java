@@ -7,6 +7,7 @@ import java.util.Random;
 
 import src.decisionTrees.PersonDecisionTree;
 import src.movement.Direction;
+import src.world.World;
 
 public class PersonBot extends Bot {
 	
@@ -16,14 +17,19 @@ public class PersonBot extends Bot {
 	private static final long serialVersionUID = 1L;
 	Random rand = new Random();
 	Point randPoint = new Point();
+	Point goalPoint = new Point();
 	boolean moveToRPoint = false;
 	PersonDecisionTree decisions;
-	boolean atRPoint = false;
+	boolean atPoint = false;
 	boolean swimming = false;
+	Thread collisionCheck;
+	Collision collision;
 	public PersonBot(int x, int y, int width , int height)
 	{
 		super(x,y,width,height);
 		decisions = new PersonDecisionTree(this);
+		collision = new Collision(this);
+		collisionCheck = new Thread(collision);
 //		System.out.println(health);
 	}
 
@@ -59,42 +65,47 @@ public class PersonBot extends Bot {
 		}
 	}
 	
-	public void moveToPoint()
+	public void moveToRandomPoint(int moveSpeed)
+	{
+		moveToPoint(randPoint,moveSpeed);
+	}
+	
+	public void moveToPoint(Point p, int moveSpeed)
 	{
 		if(Math.abs(randPoint.x - x) < moveSpeed)
 		{
-			x = randPoint.x;
+			x = p.x;
 		}
-		else if(x < randPoint.x)
+		else if(x < p.x)
 		{
 			x += moveSpeed;
 		}
-		else if(x > randPoint.x)
+		else if(x > p.x)
 		{
 			x -= moveSpeed;
 		}
 		
-		if(Math.abs(randPoint.y - y) < moveSpeed)
+		if(Math.abs(p.y - y) < moveSpeed)
 		{
-			y = randPoint.y;
+			y = p.y;
 		}
-		else if(y < randPoint.y)
+		else if(y < p.y)
 		{
 			y += moveSpeed;
 		}
-		else if(y > randPoint.y)
+		else if(y > p.y)
 		{
 			y -= moveSpeed;
 		}
 		
-		if(y == randPoint.y && x == randPoint.x)
+		if(y == p.y && x == p.x)
 		{
-			atRPoint = true;
+			atPoint = true;
 			moveToRPoint = false;
 		}
 		else
 		{
-			atRPoint = false;
+			atPoint = false;
 		}
 	}
 	
@@ -104,8 +115,13 @@ public class PersonBot extends Bot {
 		{
 			randomPoint();
 			moveToRPoint = true;
-			atRPoint = false;
+			atPoint = false;
 		}
+	}
+	
+	public void setPoint(Point p)
+	{
+		goalPoint = p;
 	}
 	
 	public void randomPoint()
@@ -156,17 +172,23 @@ public class PersonBot extends Bot {
 	
 	public void update()
 	{
+		if(!collisionCheck.isAlive())
+		{
+			collisionCheck.start();
+		}
 		updateHealthVars();
 		setHealthColor();
 //		System.out.println("Thirst: "+thirst);
 //		System.out.println("Hunger: "+hunger);
 //		System.out.println("Health: "+health);
 		decisions.decide();
-		if(!atRPoint)
+		if(!atPoint)
 		{
-			moveToPoint();
+			if(!swimming)
+				moveToRandomPoint(moveSpeed);
+			else
+				moveToRandomPoint(moveSpeed/2);
 		}
-		
 	}
 	
 	public void setSwimming(boolean swim)
@@ -176,11 +198,67 @@ public class PersonBot extends Bot {
 	
 	public boolean getSwimming() {return swimming;}
 	
-	public class Collision implements Runnable
+	public static class Collision implements Runnable
 	{
+		static PersonBot me;
+		static Sources collided;
+		static EnvObjects e;
+		long num = 0;
+		double avg =0;
+		long start =0;
+		double elapsed =0;
+		public Collision(PersonBot p)
+		{
+			me = p;
+		}
+		public Sources getCollidedSources()
+		{
+			Sources temp = collided;
+			collided = null;
+			return temp;
+		}
 		public void run()
 		{
-			
+			while(!Thread.interrupted())
+			{
+				start = System.nanoTime();
+				collided = World.collisionWithSources(me);
+				if(collided != null)
+				{
+					synchronized(me){me.decisions.addLocation(collided);}
+//					System.out.println("collision");
+					e = collided.collisionWithResourceObject(me);
+					if(e instanceof Water)
+					{
+						synchronized(me){
+							me.setSwimming(true);
+						}
+					}
+					else if(me.getSwimming())
+					{
+						synchronized(me){me.setSwimming(false);}
+					}
+				}
+				else
+				{
+					if(me.getSwimming())
+					{
+						synchronized(me){me.setSwimming(false);}
+					}
+				}
+				elapsed = ((double)(System.nanoTime()-start)/1000);
+				System.out.println("Time to complete: "+elapsed);
+				num += 1;
+				avg += elapsed;
+				System.out.println("Average time to complete: "+(double)(avg/num));
+				try{
+					Thread.sleep(1000/60);
+				} catch(InterruptedException e)
+				{
+					e.printStackTrace();
+				}
+			}
+			System.out.println("im done");
 		}
 	}
 }

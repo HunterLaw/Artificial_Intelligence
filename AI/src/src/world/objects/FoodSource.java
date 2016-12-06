@@ -82,6 +82,8 @@ public class FoodSource extends Sources
 			f2.setX(x+(f2.getX()*width));
 			f2.setY(y+(f2.getY()*height));
 		}
+		width *= size;
+		height *= size;
 //		System.out.println(water.size());
 //		g.dispose();
 	}

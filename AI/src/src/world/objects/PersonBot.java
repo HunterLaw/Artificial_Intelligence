@@ -7,6 +7,7 @@ import java.util.Random;
 
 import src.decisionTrees.PersonDecisionTree;
 import src.movement.Direction;
+import src.objects.NonTexturedObject2D;
 import src.world.World;
 
 public class PersonBot extends Bot {
@@ -17,7 +18,7 @@ public class PersonBot extends Bot {
 	private static final long serialVersionUID = 1L;
 	Random rand = new Random();
 	Point randPoint = new Point();
-	Point goalPoint = new Point();
+	Point goalPoint = null;
 	boolean moveToRPoint = false;
 	PersonDecisionTree decisions;
 	boolean atPoint = false;
@@ -65,6 +66,17 @@ public class PersonBot extends Bot {
 		}
 	}
 	
+	public void moveToObject(NonTexturedObject2D e)
+	{
+		goalPoint = new Point(e.getMidX(),e.getMidY());
+		
+	}
+	
+	public void moveToGoalPoint(int moveSpeed)
+	{
+		moveToPoint(goalPoint, moveSpeed);
+	}
+	
 	public void moveToRandomPoint(int moveSpeed)
 	{
 		moveToPoint(randPoint,moveSpeed);
@@ -72,7 +84,7 @@ public class PersonBot extends Bot {
 	
 	public void moveToPoint(Point p, int moveSpeed)
 	{
-		if(Math.abs(randPoint.x - x) < moveSpeed)
+		if(Math.abs(p.x - x) < moveSpeed)
 		{
 			x = p.x;
 		}
@@ -184,10 +196,25 @@ public class PersonBot extends Bot {
 		decisions.decide();
 		if(!atPoint)
 		{
-			if(!swimming)
-				moveToRandomPoint(moveSpeed);
+			if(goalPoint == null)
+			{
+				if(!swimming)
+					moveToRandomPoint(moveSpeed);
+				else
+					moveToRandomPoint(moveSpeed/2);
+			}
 			else
-				moveToRandomPoint(moveSpeed/2);
+			{
+				if(!swimming)
+					moveToGoalPoint(moveSpeed);
+				else
+					moveToGoalPoint(moveSpeed/2);
+			}
+		}
+		if(goalPoint != null && atPoint)
+		{
+			goalPoint = null;
+			atPoint = false;
 		}
 	}
 	
@@ -247,10 +274,10 @@ public class PersonBot extends Bot {
 					}
 				}
 				elapsed = ((double)(System.nanoTime()-start)/1000);
-				System.out.println("Time to complete: "+elapsed);
+//				System.out.println("Time to complete: "+elapsed);
 				num += 1;
 				avg += elapsed;
-				System.out.println("Average time to complete: "+(double)(avg/num));
+//				System.out.println("Average time to complete: "+(double)(avg/num));
 				try{
 					Thread.sleep(1000/60);
 				} catch(InterruptedException e)

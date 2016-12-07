@@ -56,9 +56,15 @@ public class World implements Runnable
 		{
 //			System.out.println(i);
 			envobjects.add(new FoodSource(rand.nextInt((640*2)-(10*3)),rand.nextInt((480*2)-(10*3)),10,10));
+//			System.out.println(objects.size());
+		}
+		for(int i = rand.nextInt(5);i>=0;i--)
+		{
+//			System.out.println(i);
 			envobjects.add(new WaterSource(rand.nextInt((640*2)-(10*8)),rand.nextInt((480*2)-(10*8)),10,10));
 //			System.out.println(objects.size());
 		}
+
 		envobjects.add(new WaterSource(50,50,10,10));
 		for(Sources s: envobjects)
 		{
@@ -94,7 +100,7 @@ public class World implements Runnable
 	public void update()
 	{
 		chars.update();
-//		map.update(objects, Direction.right, Direction.up);
+		map.update(objects, Direction.right, Direction.up);
 	}
 	
 	public void render()
@@ -114,7 +120,7 @@ public class World implements Runnable
 		Graphics2D g = (Graphics2D) panel.getGraphics();
 		if(g != null)
 		{
-			g.drawImage(image,0,0,null);
+			g.drawImage(image,map.getWinX(),map.getWinY(),null);
 		}
 		g.dispose();
 	}

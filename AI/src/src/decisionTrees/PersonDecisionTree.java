@@ -2,15 +2,20 @@ package src.decisionTrees;
 
 import java.util.ArrayList;
 
-import src.world.objects.EnvObjects;
+import src.world.objects.FoodSource;
 import src.world.objects.PersonBot;
 import src.world.objects.Sources;
+import src.world.objects.WaterSource;
 
 public class PersonDecisionTree extends DecisionTree 
 {
 	PersonBot person;
 	ArrayList<Node> nodes = new ArrayList<Node>();
 	ArrayList<Sources> locations = new ArrayList<Sources>();
+	ArrayList<WaterSource> waterSources = new ArrayList<WaterSource>();
+	ArrayList<FoodSource> foodSources = new ArrayList<FoodSource>();
+
+	boolean interacted = false;
 	public PersonDecisionTree(PersonBot p)
 	{
 		person = p;
@@ -39,7 +44,31 @@ public class PersonDecisionTree extends DecisionTree
 		}
 		else
 		{
-			person.moveToObject(findClosestSource());
+			Sources s = findClosestSource();
+			if(person.atGoalPoint() && !interacted)
+			{
+				System.out.println("here");
+				person.moveToObject(null);
+				s.interact();
+				if(s instanceof WaterSource)
+				{
+					if(person.addThirst(10))
+					{
+						interacted = true;
+					}
+				}
+				else if(s instanceof FoodSource)
+				{
+					if(person.addHunger(15))
+					{
+						interacted = true;
+					}
+				}
+			}
+			else
+			{
+				person.moveToObject(s);
+			}
 		}
 	}
 	

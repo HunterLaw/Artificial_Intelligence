@@ -2,6 +2,7 @@ package src.world.objects;
 
 import java.awt.Color;
 import java.awt.Point;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.PriorityQueue;
 import java.util.Random;
@@ -88,8 +89,6 @@ public class FoodSource extends Sources
 //		g.dispose();
 	}
 	
-	
-	
 	public void insertResources(Food food, Food[][] f)
 	{
 		int x = food.getX(),y = food.getY();
@@ -142,6 +141,31 @@ public class FoodSource extends Sources
 			}
 		}
 		resources.add(food);
+	}
+	
+	public void interact()
+	{
+		System.out.println("here");
+		int max = 0,surround =0;
+		ArrayList<Food> maxs = new ArrayList<Food>();
+		for(EnvObjects e: resources)
+		{
+			surround = ((Water)e).surround;
+			if(surround > max)
+			{
+				max = surround;
+				maxs.clear();
+				maxs.add((Food)e);
+			}
+			else if(surround == max)
+			{
+				maxs.add((Food)e);
+			}
+		}
+		removed.add(maxs.get(rand.nextInt(maxs.size())));
+		resources.removeAll(removed);
+		System.out.println(removed.toString());
+		updateResources = true;
 	}
 	
 	public int countFood(Food[][] f)
@@ -226,5 +250,5 @@ public class FoodSource extends Sources
 	public void update() {
 		// TODO Auto-generated method stub
 		
-	}
+	}	
 }

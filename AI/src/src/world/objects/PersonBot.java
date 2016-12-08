@@ -28,6 +28,8 @@ public class PersonBot extends Bot {
 	public PersonBot(int x, int y, int width , int height)
 	{
 		super(x,y,width,height);
+		hunger = 76;
+		thirst = 76;
 		decisions = new PersonDecisionTree(this);
 		collision = new Collision(this);
 		collisionCheck = new Thread(collision);
@@ -68,8 +70,13 @@ public class PersonBot extends Bot {
 	
 	public void moveToObject(NonTexturedObject2D e)
 	{
-		goalPoint = new Point(e.getMidX(),e.getMidY());
-		
+		if(e != null)
+			goalPoint = new Point(e.getMidX(),e.getMidY());
+		else
+		{
+			goalPoint = null;
+			atPoint = false;
+		}
 	}
 	
 	public void moveToGoalPoint(int moveSpeed)
@@ -211,19 +218,27 @@ public class PersonBot extends Bot {
 					moveToGoalPoint(moveSpeed/2);
 			}
 		}
-		if(goalPoint != null && atPoint)
-		{
-			goalPoint = null;
-			atPoint = false;
-		}
+//		if(goalPoint != null && atPoint)
+//		{
+//			goalPoint = null;
+//			atPoint = false;
+//		}
 	}
+	
+	
 	
 	public void setSwimming(boolean swim)
 	{
 		swimming = swim;
-	}
+	} 
 	
 	public boolean getSwimming() {return swimming;}
+	
+	public boolean atGoalPoint()
+	{
+		return (goalPoint != null && atPoint);
+
+	}
 	
 	public static class Collision implements Runnable
 	{
@@ -288,4 +303,5 @@ public class PersonBot extends Bot {
 			System.out.println("im done");
 		}
 	}
+	
 }

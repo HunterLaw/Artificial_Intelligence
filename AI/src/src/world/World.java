@@ -13,6 +13,7 @@ import src.UI.Renderer2D;
 import src.UI.ScrollingMap;
 import src.movement.Direction;
 import src.objects.NonTexturedObject2D;
+import src.world.objects.EnvObjects;
 import src.world.objects.FoodSource;
 import src.world.objects.PersonBot;
 import src.world.objects.Sources;
@@ -101,6 +102,13 @@ public class World implements Runnable
 	{
 		chars.update();
 		map.update(objects, Direction.right, Direction.up);
+		for(Sources s: envobjects)
+		{
+			if(s.needToUpdateResources())
+			{
+				objects.removeAll(s.getRemovedObjects());
+			}
+		}
 	}
 	
 	public void render()

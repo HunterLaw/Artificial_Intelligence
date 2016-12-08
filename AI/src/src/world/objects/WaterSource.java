@@ -2,13 +2,15 @@ package src.world.objects;
 
 import java.awt.Color;
 import java.awt.Point;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.PriorityQueue;
 import java.util.Random;
 
 import src.movement.Direction;
 
-public class WaterSource extends Sources{
+public class WaterSource extends Sources
+{
 
 	/**
 	 * 
@@ -87,7 +89,30 @@ public class WaterSource extends Sources{
 //		g.dispose();
 	}
 	
-	
+	public void interact()
+	{
+		System.out.println("here");
+		int max = 0,surround =0;
+		ArrayList<Water> maxs = new ArrayList<Water>();
+		for(EnvObjects e: resources)
+		{
+			surround = ((Water)e).surround;
+			if(surround > max)
+			{
+				max = surround;
+				maxs.clear();
+				maxs.add((Water)e);
+			}
+			else if(surround == max)
+			{
+				maxs.add((Water)e);
+			}
+		}
+		removed.add(maxs.get(rand.nextInt(maxs.size())));
+		resources.removeAll(removed);
+		System.out.println(removed.toString());
+		updateResources = true;
+	}
 	
 	public void insertResources(Water water, Water[][] w)
 	{

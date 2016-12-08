@@ -37,6 +37,27 @@ public class Bot extends EnvObjects
 	}
 	
 	
+	public boolean addThirst(double t)
+	{
+		thirst += t;
+		if(thirst >= 100)
+		{
+			thirst = 100;
+			return true;
+		}
+		return false;
+	}
+	
+	public boolean addHunger(double h)
+	{
+		hunger += h;
+		if(hunger >= 100)
+		{
+			hunger = 100;
+			return true;
+		}
+		return false;
+	}
 	
 	public double getThirst()
 	{

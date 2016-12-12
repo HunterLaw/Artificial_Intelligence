@@ -17,6 +17,7 @@ import src.world.objects.EnvObjects;
 import src.world.objects.FoodSource;
 import src.world.objects.PersonBot;
 import src.world.objects.Sources;
+import src.world.objects.Stats;
 import src.world.objects.WaterSource;
 
 public class World implements Runnable
@@ -40,12 +41,16 @@ public class World implements Runnable
 	Random rand = new Random();
 	
 	static World myself;
+	
+	static Stats botstatus;
 
 	
 	public World(JPanel panel)
 	{
 		myself = this;
 		chars = new PersonBot(20,20,10,10);
+		
+		botstatus = new Stats(chars);
 		
 		render  = new Renderer2D(640*2, 480*2, BufferedImage.TYPE_INT_RGB);
 		map = new ScrollingMap(0,0,640*2,480*2,640,480);
@@ -101,6 +106,7 @@ public class World implements Runnable
 	public void update()
 	{
 		chars.update();
+		botstatus.update();
 		map.update(objects, Direction.right, Direction.up);
 		for(Sources s: envobjects)
 		{

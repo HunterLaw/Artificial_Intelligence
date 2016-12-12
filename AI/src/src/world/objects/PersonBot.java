@@ -23,6 +23,7 @@ public class PersonBot extends Bot {
 	PersonDecisionTree decisions;
 	boolean atPoint = false;
 	boolean swimming = false;
+	boolean moving = false;
 	Thread collisionCheck;
 	Collision collision;
 	public PersonBot(int x, int y, int width , int height)
@@ -38,6 +39,7 @@ public class PersonBot extends Bot {
 
 	public void move(Direction loor, Direction uord)
 	{
+		moving = true;
 		if(loor == Direction.left)
 		{
 			if(!swimming)
@@ -166,25 +168,37 @@ public class PersonBot extends Bot {
 	
 	public void updateHealthVars()
 	{
+		double hungAdditive = 0, thirAdditive = 0;
+		if(swimming)
+		{
+			hungAdditive = (hungerDeg/2);
+			thirAdditive = (thirstDeg/2);
+		}
+		else if(moving)
+		{
+			hungAdditive = (hungerDeg/3);
+			thirAdditive = (thirstDeg/3);
+		}
+			
 		if(health >= bThres)
 		{
-			hunger -= (hungerDeg/5);
-			thirst -= (thirstDeg/5);
+			hunger -= (hungerDeg/5)+hungAdditive;
+			thirst -= (thirstDeg/5)+thirAdditive;
 		}
 		else if(health >= gThres)
 		{
-			hunger -= (hungerDeg/4);
-			thirst -= (thirstDeg/4);
+			hunger -= (hungerDeg/4)+hungAdditive;
+			thirst -= (thirstDeg/4)+thirAdditive;
 		}
 		else if(health >= yThres)
 		{
-			hunger -= (hungerDeg/2);
-			thirst -= (thirstDeg/2);
+			hunger -= (hungerDeg/2)+hungAdditive;
+			thirst -= (thirstDeg/2)+thirAdditive;
 		}
 		else
 		{
-			hunger -= (hungerDeg);
-			thirst -= (thirstDeg);
+			hunger -= (hungerDeg)+hungAdditive;
+			thirst -= (thirstDeg)+thirAdditive;
 		}
 		health = (hunger*hungerRat)+(thirst*thirstRat);
 	}
@@ -206,17 +220,29 @@ public class PersonBot extends Bot {
 			if(goalPoint == null)
 			{
 				if(!swimming)
+				{
 					moveToRandomPoint(moveSpeed);
+				}
 				else
+				{
 					moveToRandomPoint(moveSpeed/2);
+				}
 			}
 			else
 			{
 				if(!swimming)
+				{
 					moveToGoalPoint(moveSpeed);
+				}
 				else
+				{
 					moveToGoalPoint(moveSpeed/2);
+				}
 			}
+		}
+		else
+		{
+			moving = false;
 		}
 //		if(goalPoint != null && atPoint)
 //		{

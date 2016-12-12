@@ -35,6 +35,11 @@ public abstract class Sources extends NonTexturedObject2D{
 	
 	public abstract void interact();
 	
+	public boolean isExhausted()
+	{
+		return (resources.size() == 0);
+	}
+	
 	public boolean needToUpdateResources()
 	{
 		return updateResources;

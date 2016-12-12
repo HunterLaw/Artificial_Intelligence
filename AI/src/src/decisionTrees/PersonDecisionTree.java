@@ -30,8 +30,12 @@ public class PersonDecisionTree extends DecisionTree
 	{
 		if(!locations.contains(s))
 		{
-			System.out.println("Added location to memory");
-			return locations.add(s);
+			if( (s instanceof WaterSource && !waterSources.contains((WaterSource)s)) &&
+			    (s instanceof FoodSource  && !foodSources.contains((FoodSource)s))      );
+			{
+				System.out.println("Added location to memory");
+				return locations.add(s);
+			}
 		}
 		return false;
 	}
@@ -41,38 +45,56 @@ public class PersonDecisionTree extends DecisionTree
 		if(person.getHealth() > 75)
 		{
 			((ExploreNode)findTypeNode(ExploreNode.class)).explore();
+			interacted = false;
 		}
 		else
 		{
-			Sources s = findClosestSource();
-			if(person.atGoalPoint() && !interacted)
+			if(locations.size() > 0 || !interacted)
 			{
-				System.out.println("here");
-				person.moveToObject(null);
-				s.interact();
-				if(s instanceof WaterSource)
+				Sources s = findClosestSource(locations);
+				if(person.atGoalPoint() && !interacted)
 				{
-					if(person.addThirst(10))
+					System.out.println("here");
+					person.moveToObject(null);
+					if(s instanceof WaterSource)
 					{
-						interacted = true;
+						waterSources.add((WaterSource)s);
+						locations.remove(s);
+						while(!s.isExhausted())
+						{
+							s.interact();
+							if(person.addThirst(10))
+							{
+								interacted = true;
+								System.out.println(person.getThirst());
+								break;
+							}
+							
+						}
+					}
+					else if(s instanceof FoodSource)
+					{
+						foodSources.add((FoodSource)s);
+						locations.remove(s);
+						if(!person.addHunger(15))
+						{
+							interacted = true;
+						}
 					}
 				}
-				else if(s instanceof FoodSource)
+				else
 				{
-					if(person.addHunger(15))
-					{
-						interacted = true;
-					}
+					person.moveToObject(s);
 				}
 			}
 			else
 			{
-				person.moveToObject(s);
+				
 			}
 		}
 	}
 	
-	public Sources findClosestSource()
+	public Sources findClosestSource(ArrayList<Sources> locations)
 	{
 		ArrayList<Object> min = new ArrayList<Object>(2);
 		for(Sources s: locations)

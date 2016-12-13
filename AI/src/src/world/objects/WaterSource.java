@@ -23,8 +23,8 @@ public class WaterSource extends Sources
 		super(x, y, width, height,true);
 //		System.out.println(this);
 		color = Color.cyan;
-		int size = 4+rand.nextInt(5);
-//		int size = 3;
+//		int size = 4+rand.nextInt(5);
+		int size = 3;
 		this.width *= size;
 		this.height *= size;
 //		System.out.println("S:"+size);
@@ -91,7 +91,7 @@ public class WaterSource extends Sources
 	
 	public void interact()
 	{
-		System.out.println("here");
+//		System.out.println("here");
 		int max = 0,surround =0;
 		ArrayList<Water> maxs = new ArrayList<Water>();
 		for(EnvObjects e: resources)
@@ -110,8 +110,9 @@ public class WaterSource extends Sources
 		}
 		removed.add(maxs.get(rand.nextInt(maxs.size())));
 		resources.removeAll(removed);
-		System.out.println(removed.toString());
+//		System.out.println(removed.toString());
 		updateResources = true;
+		System.out.println("is Exhausted: " + isExhausted());
 	}
 	
 	public void insertResources(Water water, Water[][] w)

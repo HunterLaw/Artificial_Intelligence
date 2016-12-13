@@ -150,7 +150,7 @@ public class FoodSource extends Sources
 		ArrayList<Food> maxs = new ArrayList<Food>();
 		for(EnvObjects e: resources)
 		{
-			surround = ((Water)e).surround;
+			surround = ((Food)e).surround;
 			if(surround > max)
 			{
 				max = surround;
@@ -166,6 +166,8 @@ public class FoodSource extends Sources
 		resources.removeAll(removed);
 		System.out.println(removed.toString());
 		updateResources = true;
+		System.out.println("is Exhausted: " + isExhausted());
+
 	}
 	
 	public int countFood(Food[][] f)

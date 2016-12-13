@@ -1,6 +1,7 @@
 package src.world;
 
 import java.awt.Graphics2D;
+import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.ArrayList;
@@ -13,7 +14,6 @@ import src.UI.Renderer2D;
 import src.UI.ScrollingMap;
 import src.movement.Direction;
 import src.objects.NonTexturedObject2D;
-import src.world.objects.EnvObjects;
 import src.world.objects.FoodSource;
 import src.world.objects.PersonBot;
 import src.world.objects.Sources;
@@ -71,7 +71,7 @@ public class World implements Runnable
 //			System.out.println(objects.size());
 		}
 
-		envobjects.add(new WaterSource(50,50,10,10));
+		envobjects.add(new FoodSource(50,50,10,10));
 		for(Sources s: envobjects)
 		{
 			objects.addAll(s.getObjects());
@@ -92,9 +92,14 @@ public class World implements Runnable
 	
 	public static synchronized Sources collisionWithSources(PersonBot p)
 	{
+		Rectangle person = p.getRect();
+		person.x -= 2*p.getWidth();
+		person.width *= 5;
+		person.y -= 2*p.getHeight();
+		person.height *= 5;
 		for(Sources s: envobjects)
 		{
-			if(s.getRect().intersects(p.getRect()))
+			if(s.getRect().intersects(person))
 			{
 //				System.out.println("hit");
 				return s;

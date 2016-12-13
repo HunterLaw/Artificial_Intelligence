@@ -3,6 +3,7 @@ package src.world.objects;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Point;
+import java.util.ArrayList;
 import java.util.Random;
 
 import src.decisionTrees.PersonDecisionTree;
@@ -31,6 +32,8 @@ public class PersonBot extends Bot {
 		super(x,y,width,height);
 		hunger = 76;
 		thirst = 76;
+//		thirstDeg *= 5;
+		hungerDeg *= 5;
 		decisions = new PersonDecisionTree(this);
 		collision = new Collision(this);
 		collisionCheck = new Thread(collision);
@@ -200,6 +203,8 @@ public class PersonBot extends Bot {
 			hunger -= (hungerDeg)+hungAdditive;
 			thirst -= (thirstDeg)+thirAdditive;
 		}
+		if(health < 0) health = 0;
+		if(thirst < 0) thirst = 0;
 		health = (hunger*hungerRat)+(thirst*thirstRat);
 	}
 	
@@ -257,6 +262,20 @@ public class PersonBot extends Bot {
 	{
 		swimming = swim;
 	} 
+	
+	public ArrayList<Sources> getLocations()
+	{
+		return decisions.getLocations();
+	}
+	public ArrayList<Sources> getWaterLocations()
+	{
+		return decisions.getWaterLocations();
+	}
+	public ArrayList<Sources> getFoodLocations()
+	{
+		return decisions.getFoodLocations();
+	}
+	
 	
 	public boolean getSwimming() {return swimming;}
 	

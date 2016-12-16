@@ -16,6 +16,8 @@ public class PersonDecisionTree extends DecisionTree
 	ArrayList<Sources> foodSources = new ArrayList<Sources>();
 
 	boolean interacted = false;
+	int searchedPoints =0;
+	int searchRadius = 150;
 	public PersonDecisionTree(PersonBot p)
 	{
 		person = p;
@@ -50,13 +52,13 @@ public class PersonDecisionTree extends DecisionTree
 		if(person.getHealth() > 75)
 		{
 			((ExploreNode)findTypeNode(ExploreNode.class)).explore();
-			interacted = false;
 		}
 		else
 		{
-			
+			interacted = false;
 			if(!interacted)
 			{
+				System.out.println("Here: "+interacted);
 				Sources s;
 				if(locations.size() == 0)
 				{
@@ -65,11 +67,15 @@ public class PersonDecisionTree extends DecisionTree
 						if(person.getHunger() > person.getThirst())
 						{
 							s = findClosestSource(foodSources);
+							if(s == null) s = findClosestSource(waterSources);
 						}
 						else
 						{
 							s = findClosestSource(waterSources);
+							if(s == null) s = findClosestSource(foodSources);
+
 						}
+						
 					}
 					else if(foodSources.size() > 0)
 					{
@@ -84,6 +90,7 @@ public class PersonDecisionTree extends DecisionTree
 				{
 					s = findClosestSource(locations);
 				}
+				System.out.println("Moving to: "+s);
 				if(person.atGoalPoint())
 				{
 					System.out.println("At Point");
@@ -130,12 +137,96 @@ public class PersonDecisionTree extends DecisionTree
 					System.out.println("FoodSources: "+foodSources);
 					System.out.println("Locations: "+locations);
 				}
-				else
+				else if(s != null)
 				{
 					person.moveToObject(s);
 				}
+				else
+				{
+					s = findClosestSource();
+					if(s != null)
+					{
+						if(person.moveToRandomPointAroundSource(s, searchRadius))
+						{
+							searchedPoints++;
+						}
+						else if(searchedPoints >= 5)
+						{
+							searchRadius +=200;
+							searchedPoints =0;
+						}
+					}
+					else 
+					{
+						person.moveToARandomPoint();
+					}
+				}
 			}
 		}
+	}
+	
+	public Sources findClosestSource()
+	{
+		ArrayList<Object> min = new ArrayList<Object>(2);
+		if(locations.size() > 0)
+		{
+			for(Sources s: locations)
+			{
+				int dx = Math.abs(person.getMidX()-s.getMidX());
+				int dy = Math.abs(person.getMidY()-s.getMidY());
+				double d = Math.sqrt(Math.pow(dx, 2)+Math.pow(dy, 2));
+				if(min.size() == 0)
+				{
+					min.add(0, d);
+					min.add(1, s);
+				}
+				else if(d < ((double)min.get(0)))
+				{
+					min.set(0, d);
+					min.set(1, s);
+				}
+			}
+		}
+		if(waterSources.size() > 0)
+		{
+			for(Sources s: waterSources)
+			{
+				int dx = Math.abs(person.getMidX()-s.getMidX());
+				int dy = Math.abs(person.getMidY()-s.getMidY());
+				double d = Math.sqrt(Math.pow(dx, 2)+Math.pow(dy, 2));
+				if(min.size() == 0)
+				{
+					min.add(0, d);
+					min.add(1, s);
+				}
+				else if(d < ((double)min.get(0)))
+				{
+					min.set(0, d);
+					min.set(1, s);
+				}
+			}
+		}
+		if(foodSources.size() > 0)
+		{
+			for(Sources s: foodSources)
+			{
+				int dx = Math.abs(person.getMidX()-s.getMidX());
+				int dy = Math.abs(person.getMidY()-s.getMidY());
+				double d = Math.sqrt(Math.pow(dx, 2)+Math.pow(dy, 2));
+				if(min.size() == 0)
+				{
+					min.add(0, d);
+					min.add(1, s);
+				}
+				else if(d < ((double)min.get(0)))
+				{
+					min.set(0, d);
+					min.set(1, s);
+				}
+			}
+		}
+		if(min.isEmpty()) return null;
+		return (Sources)min.get(1);
 	}
 	
 	public Sources findClosestSource(ArrayList<Sources> locations)

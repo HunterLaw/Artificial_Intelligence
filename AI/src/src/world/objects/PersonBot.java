@@ -133,6 +133,26 @@ public class PersonBot extends Bot {
 		}
 	}
 	
+	public boolean moveToRandomPointAroundSource(Sources s, int radius)
+	{
+		if(goalPoint == null)
+		{
+			goalPoint = new Point();
+			goalPoint.x = rand.nextInt(radius*2)-radius+s.getMidX();
+			goalPoint.y = rand.nextInt(radius*2)-radius+s.getMidY();
+			moveToRPoint = true;
+			atPoint = false;
+			return false;
+		}
+		else if(atPoint)
+		{
+			goalPoint = null;
+			atPoint = false;
+			return true;
+		}
+		return false;
+	}
+	
 	public void moveToARandomPoint()
 	{
 		if(!moveToRPoint)
@@ -185,23 +205,23 @@ public class PersonBot extends Bot {
 			
 		if(health >= bThres)
 		{
-			hunger -= (hungerDeg/5)+hungAdditive;
-			thirst -= (thirstDeg/5)+thirAdditive;
+			addHunger(-((hungerDeg/5)+hungAdditive));
+			addThirst(-((thirstDeg/5)+thirAdditive));
 		}
 		else if(health >= gThres)
 		{
-			hunger -= (hungerDeg/4)+hungAdditive;
-			thirst -= (thirstDeg/4)+thirAdditive;
+			addHunger(-((hungerDeg/4)+hungAdditive));
+			addThirst(-((thirstDeg/4)+thirAdditive));
 		}
 		else if(health >= yThres)
 		{
-			hunger -= (hungerDeg/2)+hungAdditive;
-			thirst -= (thirstDeg/2)+thirAdditive;
+			addHunger(-((hungerDeg/2)+hungAdditive));
+			addThirst(-((thirstDeg/2)+thirAdditive));
 		}
 		else
 		{
-			hunger -= (hungerDeg)+hungAdditive;
-			thirst -= (thirstDeg)+thirAdditive;
+			addHunger(-((hungerDeg)+hungAdditive));
+			addThirst(-((thirstDeg)+thirAdditive));
 		}
 		if(health < 0) health = 0;
 		if(thirst < 0) thirst = 0;
@@ -210,44 +230,47 @@ public class PersonBot extends Bot {
 	
 	public void update()
 	{
-		if(!collisionCheck.isAlive())
+		if(health > 0)
 		{
-			collisionCheck.start();
-		}
-		updateHealthVars();
-		setHealthColor();
-//		System.out.println("Thirst: "+thirst);
-//		System.out.println("Hunger: "+hunger);
-//		System.out.println("Health: "+health);
-		decisions.decide();
-		if(!atPoint)
-		{
-			if(goalPoint == null)
+			if(!collisionCheck.isAlive())
 			{
-				if(!swimming)
+				collisionCheck.start();
+			}
+			updateHealthVars();
+			setHealthColor();
+	//		System.out.println("Thirst: "+thirst);
+	//		System.out.println("Hunger: "+hunger);
+	//		System.out.println("Health: "+health);
+			decisions.decide();
+			if(!atPoint)
+			{
+				if(goalPoint == null)
 				{
-					moveToRandomPoint(moveSpeed);
+					if(!swimming)
+					{
+						moveToRandomPoint(moveSpeed);
+					}
+					else
+					{
+						moveToRandomPoint(moveSpeed/2);
+					}
 				}
 				else
 				{
-					moveToRandomPoint(moveSpeed/2);
+					if(!swimming)
+					{
+						moveToGoalPoint(moveSpeed);
+					}
+					else
+					{
+						moveToGoalPoint(moveSpeed/2);
+					}
 				}
 			}
 			else
 			{
-				if(!swimming)
-				{
-					moveToGoalPoint(moveSpeed);
-				}
-				else
-				{
-					moveToGoalPoint(moveSpeed/2);
-				}
+				moving = false;
 			}
-		}
-		else
-		{
-			moving = false;
 		}
 //		if(goalPoint != null && atPoint)
 //		{

@@ -45,6 +45,10 @@ public class Bot extends EnvObjects
 			thirst = 100;
 			return true;
 		}
+		if(thirst <=0)
+		{
+			thirst =0;
+		}
 		return false;
 	}
 	
@@ -55,6 +59,10 @@ public class Bot extends EnvObjects
 		{
 			hunger = 100;
 			return true;
+		}
+		if(hunger <=0)
+		{
+			hunger =0;
 		}
 		return false;
 	}

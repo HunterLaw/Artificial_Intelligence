@@ -56,4 +56,9 @@ public abstract class Sources extends NonTexturedObject2D{
 		}
 		return null;
 	}
+	@Override
+	public String toString()
+	{
+		return super.toString()+"/E: "+isExhausted();
+	}
 }
